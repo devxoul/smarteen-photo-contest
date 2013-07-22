@@ -1,0 +1,6 @@
+sock="/tmp/smarteen-photo-contest.sock"
+if [ -e "$file" ]
+then
+	rm "$file"
+fi
+sudo uwsgi -s /tmp/smarteen-photo-contest.sock -w contest:app -H ./venv --chmod-socket=664 --uid www-data --gid www-data --master --catch-exceptions
