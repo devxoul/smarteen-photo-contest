@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block body %}
+	<div id="fb-root"></div>
+	<script>
+		$(document).ready(function() {
+			$.ajaxSetup({ cache: true });
+			$.getScript('//connect.facebook.net/en_US/all.js', function(){
+			window.fbAsyncInit = function() {
+					FB.init({ appId: '506964472706483' });
+				};
+			});
+		});
+		
+		function updateStatusCallback( response )
+		{
+			console.log( response );
+			if( response.status == 'connected' )
+			{
+				var accessToken = response.authResponse.accessToken;
+				FB.api( '/me?field=name', function( response ) {
+					console.log( response );
+					form_name.value = response.name;
+					form_facebook_id.value = response.id;
+					form_facebook_token.value = accessToken;
+					loginForm.submit();
+				} );
+			}
+			else
+			{
+				FB.login();
+			}
+		}
+		
+		function loginWithFacebook()
+		{
+			FB.getLoginStatus(updateStatusCallback);
+		}
+	</script>
+
+	<h1>Login</h1>
+	<input id="loginButton" type="button" class="btn btn-large btn-info" value="Login with facebook" onclick="loginWithFacebook()">
+	<form id="loginForm" method="POST" accept-charset="utf-8" hidden>
+		<input id="form_name" name="name" />
+		<input id="form_facebook_id" name="facebook_id" />
+		<input id="form_facebook_token" name="facebook_token" />
+	</form>
+{% endblock %}

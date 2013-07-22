@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+	<script>
+		function selectPhoto( e )
+		{
+			var photo = $('#photo');
+			
+			var fileReader = new FileReader()
+			fileReader.readAsDataURL( e.target.files[0] )
+			fileReader.onload = function( e ) {
+				photo.attr( 'src', e.target.result );
+				
+				$('#no-photo-msg').hide();
+				$('.photo-container').width( photo.width() );
+				$('.photo-container').height( photo.height() );
+			}
+		}
+	</script>
+	
+	<div>
+		<h1>
+			{{ user.name }}
+			<a href="logout" class="fui-cross btn-logout"></a>
+		</h1>
+	</div>
+
+	<img id="photo" src="{% if photo %}{{ photo.url() }}{% endif %}"></img>
+
+	{% if not photo %}
+		<h3 id="no-photo-msg" class="text-info">No photo yet :(</h3>
+	{% endif %}
+			
+	<div class="form-container">
+		<form id="uploadForm" action="http://xoul.kr/smarteen-photo-contest/photo" method="POST" enctype="multipart/form-data">
+			<div class="file-input-container">
+				<a id="btn-upload" class="btn btn-block btn-primary">New Photo</a>
+				<input id="file-uploader" type="file" name="photo" accept="image/png, image/gif, image/jpeg" onchange="selectPhoto(event)" />
+			</div>
+			<div><input id="titleInput" type="text" name="title" placeholder="Title" value="{% if photo %}{{ photo.title }}{% endif %}" /></div>
+			<div><textarea id="descriptionInput" type="text" name="description" placeholder="Desciption">{% if photo %}{{ photo.description }}{% endif %}</textarea></div>
+			<div><input type="submit" value="Save" class="btn btn-success" /></div>
+		</form>
+	</div>
+{% endblock %}
